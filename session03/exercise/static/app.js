@@ -54,30 +54,14 @@ async function sendQuestion(event) {
   statusText.textContent = '回答を待っています…';
 
   try {
-    // 2. 履歴をまとめてサーバーに送る。
-    // TODO: POSTで /api/chat に履歴を送る。下のコメントを外し、throw の行を消す。
-    // const response = await fetch('/api/chat', {
-      // method: 'POST',
-      // headers: {'Content-Type': 'application/json'},
-      // body: JSON.stringify({history: history})
-    // });
-    // const data = await response.json();
-    throw new Error('TODO: app.js の sendQuestion() で、サーバーへの送信を完成させる');
+   // 2. 履歴をまとめてサーバーに送る。
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({history: history})
+    });
+    const data = await response.json();
 
-    if (!response.ok) {
-      // サーバーが返したエラーの説明を表示する。
-      let message = '入力内容を確認してください。';
-      if (typeof data.detail === 'string') {
-        message = data.detail;
-      }
-      throw new Error(message);
-    }
-
-    // 3. LLMの回答も履歴に追加する。次の質問のときに一緒に送られる。
-    history.push({role: 'assistant', content: data.answer});
-    showMessages();
-    statusText.textContent = '送った履歴 ' + (history.length - 1) + ' 件 / 入力 '
-      + data.input_tokens + ' トークン / 出力 ' + data.output_tokens + ' トークン';
   } catch (error) {
     // 送れなかった質問は履歴から外し、入力欄に戻す。
     history.pop();
